@@ -1,12 +1,10 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import config from '../../config';
 
 // token decoded
-export const tokenDecoded = (item: string) => {
-  const token = item.split(' ')[1];
+export const tokenDecoded = (verifyItem: string, verifySecret: string) => {
   const decoded = jwt.verify(
-    token as string,
-    config.accessToken as string,
+    verifyItem,
+    verifySecret,
   ) as JwtPayload;
   return decoded;
 };

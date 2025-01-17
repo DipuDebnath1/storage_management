@@ -11,8 +11,8 @@ import { tokenDecoded } from '../../utills/tokenDecoded';
 
 // *************user*********
 // createStudent;
-const createStudent: RequestHandler = catchAsync(async (req, res, next) => {
-  const result = await UserServices.createUserIntoDB(req.body);
+const RegisterUser: RequestHandler = catchAsync(async (req, res, next) => {
+  const result = await UserServices.registerUserIntoDB(req.body);
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     message: 'User registered successfully',
@@ -27,12 +27,12 @@ const LoginUser: RequestHandler = catchAsync(async (req, res, next) => {
 
   if (data) {
     const token = jwt.sign({ data }, config.accessToken as string, {
-      expiresIn: '1y',
+      expiresIn: '1m',
     });
 
     res.cookie('authToken', token, {
-      httpOnly: true, // Accessible only by the web server
-      secure: config.development === 'production', // Send only over HTTPS in production
+      httpOnly: true, 
+      secure: config.development === 'production',
       maxAge: 30 * 24 * 3600 * 1000,
     });
 
@@ -53,17 +53,72 @@ const LoginUser: RequestHandler = catchAsync(async (req, res, next) => {
   }
 });
 
-// Find Single User;
-const FindSingleUser: RequestHandler = catchAsync(async (req, res, next) => {
-  const data = await UserServices.findSingleUser(req.params.id);
+// ForgetPassword;
+const ForgetPassword: RequestHandler = catchAsync(async (req, res, next) => {
+  
+  const { email } = req.body
+  if (!email) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'please sent valid email')
+  }
+  const data = await UserServices.forgetPassword(email);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'User retrieved in successfully',
+    message: 'sent varification code in your email',
     data: data,
   });
 });
+//   verifyResetPasswprdVerificationCode
+const VerifyResetPasswordVerificationCode: RequestHandler = catchAsync(async (req, res, next) => {
+  
+  const  {email, varificationCode } = req.body
+  if (!email || !varificationCode) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'please sent valid email & varificationCode')
+  }
+  const data = await UserServices.verifyResetPasswordVerificationCode(req.body);
+
+   const token = jwt.sign({ data }, config.resetToken as string, {
+      expiresIn: '30d',
+    });
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'varification Code verify success ',
+    data: null,
+    token: token,
+  });
+});
+
+
+// ResetPassword;
+const ResetPassword: RequestHandler = catchAsync(async (req, res, next) => {
+  const token = req.headers.authorization;
+  const {newPassword} = req.body
+  if (!token) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'No token provided');
+  }
+  if (!newPassword) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'please provide new password');
+  }
+
+  const decoded = tokenDecoded(token, config.resetToken as string);
+  if (!decoded) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Token invalid');
+  }
+
+  const data = await UserServices.resetPassword({email:decoded.data.email, password:newPassword});
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'password update success',
+    data: data,
+  });
+});
+
+
 // updateUserProfileDB;
 const UpdateUserProfile: RequestHandler = catchAsync(async (req, res, next) => {
   const token = req?.headers.authorization?.split(' ')[1];
@@ -95,7 +150,7 @@ const DeleteUserRole: RequestHandler = catchAsync(async (req, res, next) => {
     return next(new AppError(httpStatus.UNAUTHORIZED, 'No token provided'));
   }
 
-  const decoded = tokenDecoded(token);
+  const decoded = tokenDecoded(token, config.accessToken as string);
 
   const { userId } = req.body;
   const data = await UserServices.deleteUserDB(userId, decoded.data._id);
@@ -108,31 +163,13 @@ const DeleteUserRole: RequestHandler = catchAsync(async (req, res, next) => {
   });
 });
 
-// RestoreUserRole;
-const RestoreUserRole: RequestHandler = catchAsync(async (req, res, next) => {
-  const token = req.headers.authorization;
-  if (!token) {
-    return next(new AppError(httpStatus.UNAUTHORIZED, 'No token provided'));
-  }
-
-  const decoded = tokenDecoded(token);
-
-  const { userId } = req.body;
-  const data = await UserServices.restoreUserDB(userId, decoded.data._id);
-
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'User restore successfully',
-    data: data,
-  });
-});
 
 export const UserController = {
-  createStudent,
+  RegisterUser,
   LoginUser,
-  FindSingleUser,
+  ForgetPassword,
+  VerifyResetPasswordVerificationCode,
   UpdateUserProfile,
   DeleteUserRole,
-  RestoreUserRole,
+  ResetPassword,
 };

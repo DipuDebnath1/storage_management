@@ -18,45 +18,19 @@ const userSchema = new Schema<TUser>(
     password: {
       type: String,
     },
-    phone: {
+
+    avatar: {
       type: String,
-    },
-    img: {
-      type: String,
-    },
-    role: {
-      type: String,
-      enum: ['user', 'admin'],
-      default: 'user',
-    },
-    isPremium: {
-      type: Boolean,
-      default: false,
-    },
-    isVerified: {
-      type: Boolean,
-      default: false,
-    },
-    isBlocked: {
-      type: Boolean,
-      default: false,
     },
     isDeleted: {
       type: Boolean,
       default: false,
     },
-    address: {
-      type: String,
+    varificationCode: {
+      type: Number,
     },
-    totalFollower: {
-      type: [Schema.Types.ObjectId],
-      default: [],
-      ref: 'user',
-    },
-    totalFollowing: {
-      type: [Schema.Types.ObjectId],
-      default: [],
-      ref: 'user',
+    expireIn: {
+      type: Number,
     },
   },
   {
@@ -73,14 +47,6 @@ userSchema.pre('save', async function (next) {
   );
   next();
 });
-//
-// userSchema.pre('save', async function (next) {
-//   // Only hash the password if it has been modified (i.e., not during every save operation)
-//   if (this.isModified('password')) {
-//     this.password = await bcrypt.hash(this.password, Number(config.saltRounds));
-//   }
-//   next();
-// });
 
 userSchema.set('toJSON', {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -90,4 +56,4 @@ userSchema.set('toJSON', {
   },
 });
 
-export const User = model<TUser>('user', userSchema);
+export const UserCollection = model<TUser>('user', userSchema);

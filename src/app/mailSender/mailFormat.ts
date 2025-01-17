@@ -1,20 +1,11 @@
-// import { sendMail } from ".";
-
-// const mailData = {
-//   users: ['dipudebnath966@gmail.com', 'dipudebnath965@gmail.com'],
-//   // users: ['dipudebnath966@gamil.com', 'dipudebnath965@gamil.com'],
-//   subject: 'sent message for test',
-//   htmlMessage: `<div>
-
-//    <h1 className="text-3xl font-semibold mb-6">Unlock Premium Content</h1>
-//       <p className="mb-4">
-//         Subscribe for <span className="font-bold">$20/month</span> to access
-//         premium blogs and videos with exclusive content designed just for tech
-//         enthusiasts like you.
-//       </p>
-//     </div>`,
-// };
-
-//    const resMail = await sendMail(mailData);
-//     console.log(resMail);
-//     ///
+export const resetPasswordVarificationMessage = (verificationCode:number) => {
+    return ` <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+                <h2 style="color: #4caf50;">Password Reset Verification</h2>
+                <p>We received a request to reset your password. Use the code below to complete the process:</p>
+                <div style="font-size: 24px; font-weight: bold; background: #f4f4f4; padding: 15px; text-align: center; margin: 20px auto; border-radius: 5px; letter-spacing: 3px;">
+                    ${verificationCode}
+                </div>
+                <p>This code is valid for the next 30 minutes. If you did not request this, please ignore this email.</p>
+                <p>Thanks,<br>The Jotter Team</p>
+            </div>`
+}

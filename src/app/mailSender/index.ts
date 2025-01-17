@@ -15,12 +15,12 @@ const transporter = nodemailer.createTransport({
 });
 
 export const sendMail = async ({
-  users,
+  user,
   subject,
   //   textMessage,
   htmlMessage,
 }: any) => {
-  if (!users && !subject && !htmlMessage) {
+  if (!user && !subject && !htmlMessage) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
       'please provide userMail, subject, and message',
@@ -29,7 +29,7 @@ export const sendMail = async ({
   try {
     const res = await transporter.sendMail({
       from: config.mailName,
-      to: users,
+      to: user,
       subject: subject, // Subject line
       //   text: textMessage,
       html: htmlMessage, // html body

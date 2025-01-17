@@ -13,4 +13,5 @@ export default {
   development: process.env.DEVELOPMENT,
   mailPassword: process.env.MAIL_PASS,
   mailName: process.env.MAIL_NAME,
+  resetToken: process.env.RESET_TOKEN,
 };
