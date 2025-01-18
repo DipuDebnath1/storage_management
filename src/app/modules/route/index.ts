@@ -1,4 +1,5 @@
 
+import { fileRoute } from '../file/file.route';
 import { UserRoute } from '../user/user.route';
 import express from 'express';
 
@@ -7,7 +8,11 @@ const moduleRoute = [
   {
     path: '/auth',
     route: UserRoute,
-  }
+  },
+  {
+    path: '/file',
+    route: fileRoute,
+  },
 ];
 
 moduleRoute.forEach((route) => {

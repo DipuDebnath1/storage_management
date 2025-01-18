@@ -16,6 +16,11 @@ app.use(cors({ origin: '*', credentials: true }));
 app.use(cookieParser());
 app.use(express.json());
 
+// Serve static files
+// app.use('src/uploads', express.static(path.join(__dirname, 'uploads')));
+// Serve the public folder statically
+app.use('/public', express.static('public'));
+
 app.use('/api', router);
 
 const getController = (req: Request, res: Response) => {
