@@ -47,5 +47,5 @@ const deleteFolder = async (author:string, folderId:string) => {
 
 export const fodlerService = {
   createFolder,
-  deleteFolder
+  deleteFolder,
 }

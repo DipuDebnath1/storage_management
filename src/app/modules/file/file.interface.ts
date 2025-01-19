@@ -6,5 +6,6 @@ export type TFile = {
     src: string;
     folderPath: string,
     size: number,
-    author:Types.ObjectId
+    author: Types.ObjectId,
+    isDeleted:boolean
 }
