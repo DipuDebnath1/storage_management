@@ -6,13 +6,13 @@ import sendResponse from "../../utills/sendResponse";
 import AppError from "../../ErrorHandler/AppError";
 import { tokenDecoded } from "../../utills/tokenDecoded";
 import config from "../../../config";
-import { fodlerService } from "./folder.service";
+import { favoriteService } from "./favorites.service";
 
 
 // CreateFolder;
-const CreateFolder: RequestHandler = catchAsync(async (req, res, next) => {
+const CreateFavorite: RequestHandler = catchAsync(async (req, res, next) => {
 
-  const {name, parentPath} = req.body
+  const {favoriteItem, type} = req.body
   const { authorization } = req.headers
   // authorization
   if (!authorization) {
@@ -25,16 +25,16 @@ const CreateFolder: RequestHandler = catchAsync(async (req, res, next) => {
     throw new AppError(httpStatus.UNAUTHORIZED, 'you have not access this opration ')
   }
 
-  if (!name) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'provide folder name')
+  if (!favoriteItem || !type) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'provide favorite favoriteItem and type')
   }
 
-  const result = await fodlerService.createFolder(token.data._id, name, parentPath)
+  const result = await favoriteService.createFavoriteItem(token.data._id,favoriteItem, type)
 
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
-    message: 'folder create success',
+    message: 'favorite Item create success',
     data: result
     });
   
@@ -42,7 +42,7 @@ const CreateFolder: RequestHandler = catchAsync(async (req, res, next) => {
 });
 
 // CreateFolder;
-const GetAllFolder: RequestHandler = catchAsync(async (req, res, next) => {
+const GetAllFavorite: RequestHandler = catchAsync(async (req, res, next) => {
   const {name} = req.query
   const { authorization } = req.headers
   // authorization
@@ -56,12 +56,12 @@ const GetAllFolder: RequestHandler = catchAsync(async (req, res, next) => {
     throw new AppError(httpStatus.UNAUTHORIZED, 'you have not access this opration ')
   }
 
-  const result = await fodlerService.getAllFolder(token.data._id, name as string)
+  const result = await favoriteService.getAllFavoritesItem(token.data._id, name as string)
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'folders retrived successfully',
+    message: 'Favorites retrived successfully',
     data: result
     });
   
@@ -69,7 +69,7 @@ const GetAllFolder: RequestHandler = catchAsync(async (req, res, next) => {
 });
 
 // delete Folder;
-const DeleteFolder: RequestHandler = catchAsync(async (req, res, next) => {
+const RemoveFavorite: RequestHandler = catchAsync(async (req, res, next) => {
 
   const {id} = req.params
   const { authorization } = req.headers
@@ -84,20 +84,20 @@ const DeleteFolder: RequestHandler = catchAsync(async (req, res, next) => {
     throw new AppError(httpStatus.UNAUTHORIZED, 'you have not access this opration ')
   }
 
-  const result = await fodlerService.deleteFolder(token.data._id, id)
+  const result = await favoriteService.removeFavoriteItem(token.data._id, id)
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'folder delete success',
+    message: 'Favorite delete success',
     data: result
     });
   
 
 });
 
-export const FolderController = {
-  CreateFolder,
-  GetAllFolder,
-  DeleteFolder
+export const FavoriteController = {
+  CreateFavorite,
+  GetAllFavorite,
+  RemoveFavorite
 }

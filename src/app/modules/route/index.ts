@@ -1,4 +1,5 @@
 
+import { favoriteRoute } from '../favorites/favorites.route';
 import { fileRoute } from '../file/file.route';
 import { folderRoute } from '../folder/folder.route';
 import { UserRoute } from '../user/user.route';
@@ -17,6 +18,10 @@ const moduleRoute = [
   {
     path: '/storage',
     route: fileRoute,
+  },
+  {
+    path: '/favorite',
+    route: favoriteRoute,
   },
 ];
 

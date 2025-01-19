@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from "http-status";
 import AppError from "../../ErrorHandler/AppError";
 import { FolderCollection } from "./folder.model";
 import mongoose from "mongoose";
 const { ObjectId } = mongoose.Types
 
+
+// createFolder
 const createFolder = async (author:string, name:string, parentPath:string) => {
 
     // Construct full folder path
@@ -32,6 +35,16 @@ const createFolder = async (author:string, name:string, parentPath:string) => {
     return folder
 }
 
+// find all folder
+const getAllFolder = async (author: string, params:string | undefined) => {
+  const query:any= { author: new ObjectId(author) }
+  if (params) {
+    query.name = { $regex: params, $options: 'i' } 
+  }
+  const res =await FolderCollection.find(query)
+  return res
+}
+
 //delete folder
 const deleteFolder = async (author:string, folderId:string) => {
 
@@ -47,5 +60,6 @@ const deleteFolder = async (author:string, folderId:string) => {
 
 export const fodlerService = {
   createFolder,
+  getAllFolder,
   deleteFolder,
 }

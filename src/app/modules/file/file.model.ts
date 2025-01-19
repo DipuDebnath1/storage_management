@@ -7,7 +7,7 @@ const fileSchema = new Schema<TFile>({
     src: { type: String, required: true },
     folderPath: { type: String, required: false},
     size: { type: Number, required: true },
-    author: { type: Schema.Types.ObjectId, ref: 'user', required: true },
+    author: { type: Schema.Types.ObjectId, ref: 'author', required: true },
     isDeleted: {type: Boolean,default:false}
 },
     {

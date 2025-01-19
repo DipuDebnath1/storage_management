@@ -7,7 +7,7 @@ const folderSchema = new Schema<TFolder>({
     author: {
         type: Schema.Types.ObjectId,
         required:true,
-        ref:"user",
+        ref:"author",
     },
     isDelete: {
         type: Boolean,
@@ -18,4 +18,8 @@ const folderSchema = new Schema<TFolder>({
     timestamps:true
     })
 
+folderSchema.pre('find', function (next) {
+    this.where({ isDelete: false })
+    next()
+})
     export const FolderCollection = model<TFolder>('folder',folderSchema)
