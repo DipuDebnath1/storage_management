@@ -124,12 +124,115 @@ const RecentFile: RequestHandler = catchAsync(async (req, res, next) => {
   });
 })
 
+// Get All Image retived
+const GetAllImage: RequestHandler = catchAsync(async (req, res, next) => {
+  const { authorization } = req.headers;
+  const {name} = req.query
+  // Check authorization header
+  if (!authorization) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'provide access token.');
+  }
+
+  // Verify token
+  const token = tokenDecoded(authorization, config.accessToken as string);
+  if (!token) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
+  }
+
+  const result = await fileService.getAllImage(token.data._id, name as string)
+  // Respond with success
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'all image retrived successfully.',
+    data: result,
+  });
+})
+
+// Get All Image retived
+const GetAllPdf: RequestHandler = catchAsync(async (req, res, next) => {
+  const { authorization } = req.headers;
+  const {name} = req.query
+  // Check authorization header
+  if (!authorization) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'provide access token.');
+  }
+
+  // Verify token
+  const token = tokenDecoded(authorization, config.accessToken as string);
+  if (!token) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
+  }
+
+  const result = await fileService.getAllPdf(token.data._id, name as string)
+  // Respond with success
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'all Pdf retrived successfully.',
+    data: result,
+  });
+})
+
+// Get All Image retived
+const GetAllNote: RequestHandler = catchAsync(async (req, res, next) => {
+  const { authorization } = req.headers;
+  const {name} = req.query
+  // Check authorization header
+  if (!authorization) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'provide access token.');
+  }
+
+  // Verify token
+  const token = tokenDecoded(authorization, config.accessToken as string);
+  if (!token) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
+  }
+
+  const result = await fileService.getAllNote(token.data._id, name as string)
+  // Respond with success
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'all Note retrived successfully.',
+    data: result,
+  });
+})
+
+// Get All Image retived
+const DeleteFile: RequestHandler = catchAsync(async (req, res, next) => {
+  const { authorization } = req.headers;
+  const {id} = req.params
+  // Check authorization header
+  if (!authorization) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'provide access token.');
+  }
+
+  // Verify token
+  const token = tokenDecoded(authorization, config.accessToken as string);
+  if (!token) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
+  }
+
+  const result = await fileService.deleteFile(token.data._id, id as string)
+  // Respond with success
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'file delete successfully.',
+    data: result,
+  });
+})
 
 
 export const FileController = {
   FileUpload,
   StorageUsesInfo,
   FileCategoryCount,
-  RecentFile
+  RecentFile,
+  GetAllImage,
+  GetAllPdf,
+  GetAllNote,
+  DeleteFile
   
 }

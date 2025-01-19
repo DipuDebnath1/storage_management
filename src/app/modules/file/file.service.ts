@@ -85,9 +85,49 @@ const recentFile = async (author:string) => {
   return files
 }
 
+//images file retrived
+const getAllImage = async (author: string, params:string) => {
+  const query: any = { author: new ObjectId(author), mimetype: { $regex: 'image', $options: 'i' } }
+    if (params) {
+    query.name = { $regex: params, $options: 'i' } 
+  }
+  const images = await FileCollection.find(query)
+  return images
+}
+
+//pdf file retrived
+const getAllPdf = async (author: string,params:string) => {
+  const query:any = { author: new ObjectId(author), mimetype: { $regex: 'application', $options: 'i' } }
+    if (params) {
+    query.name = { $regex: params, $options: 'i' } 
+  }
+  const images = await FileCollection.find(query)
+  return images
+}
+
+//note note retrived
+const getAllNote = async (author: string, params:string) => {
+  const query:any = { author: new ObjectId(author), mimetype: { $regex: 'text', $options: 'i' }}
+    if (params) {
+    query.name = { $regex: params, $options: 'i' } 
+  }
+  const images = await FileCollection.find(query)
+  return images
+}
+//delete file
+const deleteFile = async (author: string, fileId:string) => {
+  const params = {author: new ObjectId(author), _id: new ObjectId(fileId)}
+  const res = await FileCollection.updateOne(params,{isDeleted:true})
+  return res
+}
+
 export const fileService = {
   uploadFile,
   storageUsesInfo,
   fileCategoryCount,
-  recentFile
+  recentFile,
+  getAllImage,
+  getAllPdf,
+  getAllNote,
+  deleteFile
 }
