@@ -1,5 +1,6 @@
 import multer from "multer";
 
+// local store
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null,'public')
@@ -13,6 +14,6 @@ const storage = multer.diskStorage({
 export const uploadFile = multer({storage})
 
 
-// Multer Setup for File Upload
-// const storage = multer.memoryStorage();  // Store files in memory
+// GridFS Storage Setup
+// const storage = multer.memoryStorage(); 
 // export const uploadFile = multer({ storage });

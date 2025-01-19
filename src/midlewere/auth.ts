@@ -4,6 +4,7 @@ import catchAsync from '../app/utills/catchAsync';
 import AppError from '../app/ErrorHandler/AppError';
 import httpStatus from 'http-status';
 import { tokenDecoded } from '../app/utills/tokenDecoded';
+import config from '../config';
 
 // verifyUser;
 export const verifyUser = () => {
@@ -17,7 +18,7 @@ export const verifyUser = () => {
           .json({ message: 'Authorization token missing or incorrect format' });
       }
 
-      const decoded = tokenDecoded(authHeader);
+      const decoded = tokenDecoded(authHeader, config.accessToken as string);
 
       if (!decoded) {
         new AppError(httpStatus.UNAUTHORIZED, 'Unauthorized, missing token');
@@ -35,59 +36,24 @@ export const verifyUser = () => {
   );
 };
 
-// verifyAdmin;
-export const verifyAdmin = () => {
-  return catchAsync(
-    async (req: Request, res: Response, next: NextFunction): Promise<any> => {
-      const authHeader = req.headers.authorization;
 
-      if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res
-          .status(httpStatus.UNAUTHORIZED)
-          .json({ message: 'Authorization token missing or incorrect format' });
-      }
-
-      const decoded = tokenDecoded(authHeader);
-      if (!decoded) {
-        new AppError(httpStatus.UNAUTHORIZED, 'Unauthorized, missing token');
-      }
-      if (decoded?.data.role === 'admin') {
-        next();
-      } else {
-        res.status(httpStatus.UNAUTHORIZED).json({
-          statusCode: httpStatus.UNAUTHORIZED,
-          success: false,
-          message: 'You have no access to this route',
-        });
-      }
-    },
-  );
-};
 // verifyLoginUser;
 export const verifyLoginUser = () => {
   return catchAsync(
     async (req: Request, res: Response, next: NextFunction): Promise<any> => {
       const authHeader = req.headers.authorization;
 
-      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      if (!authHeader) {
         return res
           .status(httpStatus.UNAUTHORIZED)
-          .json({ message: 'Authorization token missing or incorrect format' });
+          .json({ message: 'Authorization token missing ' });
       }
 
-      const decoded = tokenDecoded(authHeader);
+      const decoded = tokenDecoded(authHeader, config.accessToken as string);
       if (!decoded) {
         new AppError(httpStatus.UNAUTHORIZED, 'Unauthorized, missing token');
       }
-      if (decoded?.data.role === 'admin' || decoded?.data.role === 'user') {
-        next();
-      } else {
-        res.status(httpStatus.UNAUTHORIZED).json({
-          statusCode: httpStatus.UNAUTHORIZED,
-          success: false,
-          message: 'You have no access to this route',
-        });
-      }
+      next()
     },
   );
 };

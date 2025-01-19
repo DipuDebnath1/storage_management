@@ -1,5 +1,6 @@
 
 import { fileRoute } from '../file/file.route';
+import { folderRoute } from '../folder/folder.route';
 import { UserRoute } from '../user/user.route';
 import express from 'express';
 
@@ -10,7 +11,11 @@ const moduleRoute = [
     route: UserRoute,
   },
   {
-    path: '/file',
+    path: '/folder',
+    route: folderRoute,
+  },
+  {
+    path: '/storage',
     route: fileRoute,
   },
 ];

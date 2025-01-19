@@ -52,6 +52,8 @@ userSchema.set('toJSON', {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   transform: function (doc, ret, options) {
     ret.password = undefined;
+    ret.expireIn = undefined;
+    ret.varificationCode = undefined;
     return ret;
   },
 });

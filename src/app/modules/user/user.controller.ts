@@ -27,7 +27,7 @@ const LoginUser: RequestHandler = catchAsync(async (req, res, next) => {
 
   if (data) {
     const token = jwt.sign({ data }, config.accessToken as string, {
-      expiresIn: '1m',
+      expiresIn: '7d',
     });
 
     res.cookie('authToken', token, {

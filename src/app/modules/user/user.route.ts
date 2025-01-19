@@ -3,7 +3,6 @@ import { UserController } from './user.controller';
 import validationRequest from '../../utills/validationRequest';
 import userValidation from './user.validation';
 import {
-  verifyAdmin,
   verifyUser,
 } from '../../../midlewere/auth';
 const router = express.Router();
@@ -16,7 +15,7 @@ router.post('/signin', UserController.LoginUser);
 router.post('/forgetPassword', UserController.ForgetPassword);
 router.post('/VerifyOTP', UserController.VerifyResetPasswordVerificationCode);
 router.post('/resetPassword', UserController.ResetPassword);
-router.post('/delete', verifyAdmin(), UserController.DeleteUserRole);
+router.post('/delete',  UserController.DeleteUserRole);
 
 router.put('/update-profile', verifyUser(), UserController.UpdateUserProfile);
 
