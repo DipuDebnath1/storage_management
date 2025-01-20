@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { RequestHandler } from 'express';
 import catchAsync from '../../utills/catchAsync';
@@ -53,6 +54,17 @@ const LoginUser: RequestHandler = catchAsync(async (req, res, next) => {
   }
 });
 
+// LoginUser;
+const LogOutUser: RequestHandler = catchAsync(async (req, res, next) => {
+  res.clearCookie("authToken")
+ sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'User Log Out in successfully',
+      data: null,
+    });
+});
+
 // ForgetPassword;
 const ForgetPassword: RequestHandler = catchAsync(async (req, res, next) => {
   
@@ -79,87 +91,151 @@ const VerifyResetPasswordVerificationCode: RequestHandler = catchAsync(async (re
   const data = await UserServices.verifyResetPasswordVerificationCode(req.body);
 
    const token = jwt.sign({ data }, config.resetToken as string, {
-      expiresIn: '30d',
-    });
+      expiresIn: '7d',
+   });
+  res.cookie('resetPasswordToken', token, {
+    httpOnly: true,
+    secure: config.development === "production",
+    maxAge:1000 * 60 * 30
+  })
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'varification Code verify success ',
+    message: 'varification Code verify success please reset password in after 10 min',
     data: null,
-    token: token,
   });
 });
-
 
 // ResetPassword;
 const ResetPassword: RequestHandler = catchAsync(async (req, res, next) => {
-  const token = req.headers.authorization;
   const {newPassword} = req.body
-  if (!token) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'No token provided');
-  }
+
   if (!newPassword) {
     throw new AppError(httpStatus.BAD_REQUEST, 'please provide new password');
   }
-
-  const decoded = tokenDecoded(token, config.resetToken as string);
-  if (!decoded) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Token invalid');
+// Check authorization header
+  const token  = req.cookies.resetPasswordToken
+  // Verify token
+  const {data} = tokenDecoded(token, config.resetToken as string);
+    
+  if (!token || !data) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
   }
 
-  const data = await UserServices.resetPassword({email:decoded.data.email, password:newPassword});
+  const result = await UserServices.resetPassword( data, newPassword );
 
+  const authToken = jwt.sign({data:result}, config.accessToken as string, {expiresIn:7})
+  
+   res.cookie('authToken', authToken, {
+    httpOnly: true,
+    secure: config.development === "production",
+    maxAge:1000 * 60 * 60 * 24 * 7
+  })
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'password update success',
-    data: data,
+    message: 'password reset success',
+    data: result,
   });
 });
 
-
 // updateUserProfileDB;
 const UpdateUserProfile: RequestHandler = catchAsync(async (req, res, next) => {
-  const token = req?.headers.authorization?.split(' ')[1];
+  const { name } = req.body
+  
+  const payload: Record<string, any> = {};
 
-  if (!token) {
-    return next(new AppError(httpStatus.UNAUTHORIZED, 'No token provided'));
+  if (name) {
+    payload['name'] = name
+  }
+   if (req.file) {
+    payload['avatar'] = `${config.localApi}/${req.file.path.replace(/\\/g, '/')}`
+  }
+  
+  // checking data 
+  if (!Object.keys(payload).length) {
+    throw new AppError(httpStatus.BAD_REQUEST,'please provide data !')
+  }
+// Check authorization header
+     const token  = req.cookies.authToken
+  // Verify token
+  const {data} = tokenDecoded(token, config.accessToken as string);
+    
+  if (!token || !data) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
   }
 
-  const decoded = jwt.verify(
-    token,
-    config.accessToken as string,
-  ) as JwtPayload & { data: { _id: string } };
-  const data = await UserServices.updateUserProfileDB(
-    decoded.data._id,
-    req.body,
-  );
+  const result = await UserServices.updateUserProfileDB(
+    data._id,
+    payload);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Profile Update in successfully',
-    data: data,
+    data: result,
   });
 });
-// DeleteUserRole;
-const DeleteUserRole: RequestHandler = catchAsync(async (req, res, next) => {
-  const token = req.headers.authorization;
-  if (!token) {
-    return next(new AppError(httpStatus.UNAUTHORIZED, 'No token provided'));
+
+// updateUserProfileDB;
+const UpdateUserPassword: RequestHandler = catchAsync(async (req, res, next) => {
+  // Check authorization header
+     const token  = req.cookies.authToken
+  // Verify token
+  const {data} = tokenDecoded(token, config.accessToken as string);
+    
+  if (!token || !data) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
   }
 
-  const decoded = tokenDecoded(token, config.accessToken as string);
+  //paylad data
+  const { newPassword, oldPassword } = req.body
+  // checking oladpassword and newpassworld
+  if (newPassword === oldPassword) {
+    throw new AppError(httpStatus.BAD_REQUEST,'newpassword & oldpassword is same  !')
+  }
+  // checking oladpassword and newpassworld
+  if (!newPassword || !oldPassword) {
+    throw new AppError(httpStatus.BAD_REQUEST,'please provide newpassword & oldpassword data !')
+  }
 
-  const { userId } = req.body;
-  const data = await UserServices.deleteUserDB(userId, decoded.data._id);
+
+  const result = await UserServices.updateUserPassword(
+    data._id,
+    oldPassword,newPassword
+    );
+
+  res.clearCookie('authToken');
+  
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Update password successfully',
+    data: result,
+  });
+});
+
+// DeleteUserRole;
+const DeleteAccount: RequestHandler = catchAsync(async (req, res, next) => {
+  // Check authorization header
+     const token  = req.cookies.authToken
+  // Verify token
+  const {data} = tokenDecoded(token, config.accessToken as string);
+    
+  if (!token || !data) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
+  }
+  const result = await UserServices.deleteAccount(data._id);
+  if (result) {
+    res.clearCookie("authToken")
+  }
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'User delete successfully',
-    data: data,
+    message: 'account delete successfully',
+    data: result,
   });
 });
 
@@ -167,9 +243,11 @@ const DeleteUserRole: RequestHandler = catchAsync(async (req, res, next) => {
 export const UserController = {
   RegisterUser,
   LoginUser,
+  LogOutUser,
   ForgetPassword,
   VerifyResetPasswordVerificationCode,
-  UpdateUserProfile,
-  DeleteUserRole,
   ResetPassword,
+  UpdateUserProfile,
+  UpdateUserPassword,
+  DeleteAccount,
 };

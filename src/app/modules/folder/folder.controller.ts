@@ -13,23 +13,20 @@ import { fodlerService } from "./folder.service";
 const CreateFolder: RequestHandler = catchAsync(async (req, res, next) => {
 
   const {name, parentPath} = req.body
-  const { authorization } = req.headers
-  // authorization
-  if (!authorization) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'you have not access this opration ')
-  }
-
-  // token verfy 
-  const token = tokenDecoded(authorization, config.accessToken as string)
-  if (!token) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'you have not access this opration ')
+// Check authorization header
+     const token  = req.cookies.authToken
+  // Verify token
+  const {data} = tokenDecoded(token, config.accessToken as string);
+    
+  if (!token || !data) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
   }
 
   if (!name) {
     throw new AppError(httpStatus.BAD_REQUEST, 'provide folder name')
   }
 
-  const result = await fodlerService.createFolder(token.data._id, name, parentPath)
+  const result = await fodlerService.createFolder(data._id, name, parentPath)
 
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
@@ -44,19 +41,16 @@ const CreateFolder: RequestHandler = catchAsync(async (req, res, next) => {
 // CreateFolder;
 const GetAllFolder: RequestHandler = catchAsync(async (req, res, next) => {
   const {name} = req.query
-  const { authorization } = req.headers
-  // authorization
-  if (!authorization) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'you have not access this opration ')
+ // Check authorization header
+     const token  = req.cookies.authToken
+  // Verify token
+  const {data} = tokenDecoded(token, config.accessToken as string);
+    
+  if (!token || !data) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
   }
 
-  // token verfy 
-  const token = tokenDecoded(authorization, config.accessToken as string)
-  if (!token) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'you have not access this opration ')
-  }
-
-  const result = await fodlerService.getAllFolder(token.data._id, name as string)
+  const result = await fodlerService.getAllFolder(data._id, name as string)
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -72,19 +66,15 @@ const GetAllFolder: RequestHandler = catchAsync(async (req, res, next) => {
 const DeleteFolder: RequestHandler = catchAsync(async (req, res, next) => {
 
   const {id} = req.params
-  const { authorization } = req.headers
-  // authorization
-  if (!authorization) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'you have not access this opration ')
+  // Check authorization header
+     const token  = req.cookies.authToken
+  // Verify token
+  const {data} = tokenDecoded(token, config.accessToken as string);
+    
+  if (!token || !data) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
   }
-
-  // token verfy 
-  const token = tokenDecoded(authorization, config.accessToken as string)
-  if (!token) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'you have not access this opration ')
-  }
-
-  const result = await fodlerService.deleteFolder(token.data._id, id)
+  const result = await fodlerService.deleteFolder(data._id, id)
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

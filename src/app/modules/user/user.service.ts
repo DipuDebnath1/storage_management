@@ -57,11 +57,15 @@ const loginUser = async (payload: Partial<TUser>) => {
   }
 };
 
+
 //forget password   
 const forgetPassword = async (payload: Partial<TUser>) => {
   const user = await UserCollection.findOne({ email: payload })
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'user not found')    
+  }
+  if (user.isDeleted) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'accound already deleted')    
   }
   // generatevarificationNumber
   function generatevarificationNumber() {
@@ -106,31 +110,31 @@ const verifyResetPasswordVerificationCode = async (payload: Partial<TUser>) => {
     if (varificationCode!==user.varificationCode) {
         throw new AppError(
           httpStatus.BAD_REQUEST,
-          'sorry verfication not match ',
+          'sorry verfication varify failed',
         );
  
       } 
-      return user;
+      return user._id;
   } catch (err) {
     console.log('Error comparing passwords:', err);
     throw err;
   }
 };
 // reset password 
-const resetPassword = async (payload:Partial<TUser>) => {
+const resetPassword = async (id: string, password:string ) => {
   try {
-    const user = await UserCollection.findOne({ email: payload.email })
+    const user = await UserCollection.findById(id)
     if (!user) {
       throw new AppError(httpStatus.BAD_REQUEST,"user not found")
     }
-    user.password = payload.password as string
+    user.password =password 
     user.save()     
 
     return user;
   } catch (error: any) {
     throw new AppError(
       httpStatus.CONFLICT,
-      error.message || 'user restore failed',
+      error.message || 'user reset failed',
     );
   }
 };
@@ -139,12 +143,39 @@ const resetPassword = async (payload:Partial<TUser>) => {
 const updateUserProfileDB = async (userId: string, payload: Partial<TUser>) => {
   try {
     // console.log(userId, payload);
-    const result = UserCollection.findByIdAndUpdate(userId, payload, { new: true });
+    const result =await UserCollection.findByIdAndUpdate(userId, payload, { new: true });
     return result;
   } catch (err: any) {
     throw new AppError(
       httpStatus.CONFLICT,
-      err.message || 'user account update failed',
+      err.message || 'user profile update failed',
+    );
+  }
+};
+
+// updateUserProfileDB;
+const updateUserPassword = async (userId: string, oldPassword:string, newPassword:string) => {
+  try {
+    // console.log(userId, payload);
+    const user =await UserCollection.findById(userId)
+
+    if (!user) {
+      throw new AppError(httpStatus.NOT_FOUND,'user not found')
+    }
+
+    const isValidUser =await bcrypt.compare(oldPassword, user.password)
+
+    if (!isValidUser) {
+      throw new AppError(httpStatus.BAD_REQUEST, "sorry password not match")
+    }
+    user.password = newPassword
+    await user.save()
+
+    return user;
+  } catch (err: any) {
+    throw new AppError(
+      httpStatus.CONFLICT,
+      err.message || 'user profile update failed',
     );
   }
 };
@@ -152,29 +183,12 @@ const updateUserProfileDB = async (userId: string, payload: Partial<TUser>) => {
 // ********admin******
 
 // delete user
-const deleteUserDB = async (userId: string, adminId: string) => {
-  try {
-    if (userId === adminId) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'you can not deleted you');
-    }
-    const user = await UserCollection.findById(userId);
-    if (!user) {
-      throw new AppError(httpStatus.BAD_REQUEST, "user Can't found !");
-    }
-    if (user.isDeleted) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'user already have deleted');
-    }
-
-    user.isDeleted = true;
-    await user.save();
-
-    return user;
-  } catch (error: any) {
-    throw new AppError(
-      httpStatus.CONFLICT,
-      error.message || 'user delete failed',
-    );
+const deleteAccount = async (userId:string) => {
+  const res = await UserCollection.findByIdAndUpdate(userId, { isDeleted: true })
+  if (!res) {
+    throw new AppError(httpStatus.NOT_FOUND, "user not found!")
   }
+  return null
 };
 
 
@@ -184,7 +198,8 @@ export const UserServices = {
   loginUser,
   forgetPassword,
   verifyResetPasswordVerificationCode,
+  resetPassword,
   updateUserProfileDB,
-  deleteUserDB,
-  resetPassword
+  updateUserPassword,
+  deleteAccount,
 };

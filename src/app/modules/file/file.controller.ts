@@ -10,19 +10,13 @@ import config from "../../../config";
 
 // FileUpload
 const FileUpload: RequestHandler = catchAsync(async (req, res, next) => {
-  const { authorization } = req.headers;
-
-  // Check authorization header
-  if (!authorization) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'provide access token.');
-  }
-
+    const token  = req.cookies.authToken
   // Verify token
-  const token = tokenDecoded(authorization, config.accessToken as string);
-  if (!token) {
+  const {data} = tokenDecoded(token, config.accessToken as string);
+   
+  if (!token || !data) {
     throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
   }
-
   // Validate file upload
   if (!req.file) {
     throw new AppError(httpStatus.BAD_REQUEST, 'File upload failed.');
@@ -37,7 +31,7 @@ const FileUpload: RequestHandler = catchAsync(async (req, res, next) => {
   };
 
   // Save file metadata
-  const result = await fileService.uploadFile(token.data._id, fileData, req.body.folderPath);
+  const result = await fileService.uploadFile(data._id, fileData, req.body.folderPath);
 
   // Respond with success
   sendResponse(res, {
@@ -50,20 +44,15 @@ const FileUpload: RequestHandler = catchAsync(async (req, res, next) => {
 
 // storage Data
 const StorageUsesInfo: RequestHandler = catchAsync(async (req, res, next) => {
-  const { authorization } = req.headers;
-
-  // Check authorization header
-  if (!authorization) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'provide access token.');
-  }
-
+     const token  = req.cookies.authToken
   // Verify token
-  const token = tokenDecoded(authorization, config.accessToken as string);
-  if (!token) {
+  const {data} = tokenDecoded(token, config.accessToken as string);
+  
+  if (!token || !data) {
     throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
   }
 
-  const result = await fileService.storageUsesInfo(token.data._id)
+  const result = await fileService.storageUsesInfo(data._id)
   // Respond with success
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -76,20 +65,15 @@ const StorageUsesInfo: RequestHandler = catchAsync(async (req, res, next) => {
 
 // file Category Count 
 const FileCategoryCount: RequestHandler = catchAsync(async (req, res, next) => {
-  const { authorization } = req.headers;
-
-  // Check authorization header
-  if (!authorization) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'provide access token.');
-  }
-
+    const token  = req.cookies.authToken
   // Verify token
-  const token = tokenDecoded(authorization, config.accessToken as string);
-  if (!token) {
+  const {data} = tokenDecoded(token, config.accessToken as string);
+  
+  if (!token || !data) {
     throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
   }
 
-  const result = await fileService.fileCategoryCount(token.data._id)
+  const result = await fileService.fileCategoryCount(data._id)
   // Respond with success
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -101,20 +85,15 @@ const FileCategoryCount: RequestHandler = catchAsync(async (req, res, next) => {
 
 // recentFile retived
 const RecentFile: RequestHandler = catchAsync(async (req, res, next) => {
-  const { authorization } = req.headers;
-
-  // Check authorization header
-  if (!authorization) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'provide access token.');
-  }
-
+      const token  = req.cookies.authToken
   // Verify token
-  const token = tokenDecoded(authorization, config.accessToken as string);
-  if (!token) {
+  const {data} = tokenDecoded(token, config.accessToken as string);
+  
+  if (!token || !data) {
     throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
   }
 
-  const result = await fileService.recentFile(token.data._id)
+  const result = await fileService.recentFile(data._id)
   // Respond with success
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -126,20 +105,16 @@ const RecentFile: RequestHandler = catchAsync(async (req, res, next) => {
 
 // Get All Image retived
 const GetAllImage: RequestHandler = catchAsync(async (req, res, next) => {
-  const { authorization } = req.headers;
   const {name} = req.query
-  // Check authorization header
-  if (!authorization) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'provide access token.');
-  }
 
+     const token  = req.cookies.authToken
   // Verify token
-  const token = tokenDecoded(authorization, config.accessToken as string);
-  if (!token) {
+  const {data} = tokenDecoded(token, config.accessToken as string);
+   
+  if (!token || !data) {
     throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
   }
-
-  const result = await fileService.getAllImage(token.data._id, name as string)
+  const result = await fileService.getAllImage(data._id, name as string)
   // Respond with success
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -151,20 +126,15 @@ const GetAllImage: RequestHandler = catchAsync(async (req, res, next) => {
 
 // Get All Image retived
 const GetAllPdf: RequestHandler = catchAsync(async (req, res, next) => {
-  const { authorization } = req.headers;
   const {name} = req.query
-  // Check authorization header
-  if (!authorization) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'provide access token.');
-  }
-
+      const token  = req.cookies.authToken
   // Verify token
-  const token = tokenDecoded(authorization, config.accessToken as string);
-  if (!token) {
+  const {data} = tokenDecoded(token, config.accessToken as string);
+  
+  if (!token || !data) {
     throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
   }
-
-  const result = await fileService.getAllPdf(token.data._id, name as string)
+  const result = await fileService.getAllPdf(data._id, name as string)
   // Respond with success
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -176,20 +146,15 @@ const GetAllPdf: RequestHandler = catchAsync(async (req, res, next) => {
 
 // Get All Image retived
 const GetAllNote: RequestHandler = catchAsync(async (req, res, next) => {
-  const { authorization } = req.headers;
   const {name} = req.query
-  // Check authorization header
-  if (!authorization) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'provide access token.');
-  }
-
+     const token  = req.cookies.authToken
   // Verify token
-  const token = tokenDecoded(authorization, config.accessToken as string);
-  if (!token) {
+  const {data} = tokenDecoded(token, config.accessToken as string);
+   
+  if (!token || !data) {
     throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
   }
-
-  const result = await fileService.getAllNote(token.data._id, name as string)
+  const result = await fileService.getAllNote(data._id, name as string)
   // Respond with success
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -201,21 +166,17 @@ const GetAllNote: RequestHandler = catchAsync(async (req, res, next) => {
 
 // Get All file Date Wise
 const GetAllFileDateWise: RequestHandler = catchAsync(async (req, res, next) => {
-  const { authorization } = req.headers;
   const {date} = req.params
   const {name} = req.query
   // Check authorization header
-  if (!authorization) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'provide access token.');
-  }
-
+     const token  = req.cookies.authToken
   // Verify token
-  const token = tokenDecoded(authorization, config.accessToken as string);
-  if (!token) {
+  const {data} = tokenDecoded(token, config.accessToken as string);
+    
+  if (!token || !data) {
     throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
   }
-
-  const result = await fileService.getFileDateWise(token.data._id, date, name as string)
+  const result = await fileService.getFileDateWise(data._id, date, name as string)
   // Respond with success
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -227,20 +188,17 @@ const GetAllFileDateWise: RequestHandler = catchAsync(async (req, res, next) => 
 
 // Get All Image retived
 const DeleteFile: RequestHandler = catchAsync(async (req, res, next) => {
-  const { authorization } = req.headers;
   const {id} = req.params
   // Check authorization header
-  if (!authorization) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'provide access token.');
-  }
-
+     const token  = req.cookies.authToken
   // Verify token
-  const token = tokenDecoded(authorization, config.accessToken as string);
-  if (!token) {
+  const {data} = tokenDecoded(token, config.accessToken as string);
+  
+  if (!token || !data) {
     throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
   }
 
-  const result = await fileService.deleteFile(token.data._id, id as string)
+  const result = await fileService.deleteFile(data._id, id as string)
   // Respond with success
   sendResponse(res, {
     statusCode: httpStatus.OK,

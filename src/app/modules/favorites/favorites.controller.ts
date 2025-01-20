@@ -13,23 +13,20 @@ import { favoriteService } from "./favorites.service";
 const CreateFavorite: RequestHandler = catchAsync(async (req, res, next) => {
 
   const {favoriteItem, type} = req.body
-  const { authorization } = req.headers
-  // authorization
-  if (!authorization) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'you have not access this opration ')
-  }
-
-  // token verfy 
-  const token = tokenDecoded(authorization, config.accessToken as string)
-  if (!token) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'you have not access this opration ')
+  // Check authorization header
+     const token  = req.cookies.authToken
+  // Verify token
+  const {data} = tokenDecoded(token, config.accessToken as string);
+    
+  if (!token || !data) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
   }
 
   if (!favoriteItem || !type) {
     throw new AppError(httpStatus.BAD_REQUEST, 'provide favorite favoriteItem and type')
   }
 
-  const result = await favoriteService.createFavoriteItem(token.data._id,favoriteItem, type)
+  const result = await favoriteService.createFavoriteItem(data._id,favoriteItem, type)
 
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
@@ -44,18 +41,14 @@ const CreateFavorite: RequestHandler = catchAsync(async (req, res, next) => {
 // CreateFolder;
 const GetAllFavorite: RequestHandler = catchAsync(async (req, res, next) => {
   const {name} = req.query
-  const { authorization } = req.headers
-  // authorization
-  if (!authorization) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'you have not access this opration ')
+  // Check authorization header
+     const token  = req.cookies.authToken
+  // Verify token
+  const {data} = tokenDecoded(token, config.accessToken as string);
+    
+  if (!token || !data) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
   }
-
-  // token verfy 
-  const token = tokenDecoded(authorization, config.accessToken as string)
-  if (!token) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'you have not access this opration ')
-  }
-
   const result = await favoriteService.getAllFavoritesItem(token.data._id, name as string)
 
   sendResponse(res, {
@@ -72,18 +65,14 @@ const GetAllFavorite: RequestHandler = catchAsync(async (req, res, next) => {
 const RemoveFavorite: RequestHandler = catchAsync(async (req, res, next) => {
 
   const {id} = req.params
-  const { authorization } = req.headers
-  // authorization
-  if (!authorization) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'you have not access this opration ')
+ // Check authorization header
+     const token  = req.cookies.authToken
+  // Verify token
+  const {data} = tokenDecoded(token, config.accessToken as string);
+    
+  if (!token || !data) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
   }
-
-  // token verfy 
-  const token = tokenDecoded(authorization, config.accessToken as string)
-  if (!token) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'you have not access this opration ')
-  }
-
   const result = await favoriteService.removeFavoriteItem(token.data._id, id)
 
   sendResponse(res, {
