@@ -114,6 +114,23 @@ const getAllNote = async (author: string, params:string) => {
   const images = await FileCollection.find(query)
   return images
 }
+//note note retrived
+const getFileDateWise = async (author: string, date: string, params: string) => {
+  const startDate = new Date(date)
+  const endDate = new Date(date)
+  endDate.setUTCHours(23, 23, 23, 999)
+  
+  const query: any = {
+    author: new ObjectId(author), createdAt: { 
+    $gte:startDate,
+    $lt:endDate,
+   }}
+    if (params) {
+    query.name = { $regex: params, $options: 'i' } 
+  }
+  const files = await FileCollection.find(query)
+  return files
+}
 //delete file
 const deleteFile = async (author: string, fileId:string) => {
   const params = {author: new ObjectId(author), _id: new ObjectId(fileId)}
@@ -129,5 +146,6 @@ export const fileService = {
   getAllImage,
   getAllPdf,
   getAllNote,
-  deleteFile
+  getFileDateWise,
+  deleteFile,
 }

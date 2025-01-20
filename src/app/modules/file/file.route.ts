@@ -12,6 +12,7 @@ router.get('/recent', FileController.RecentFile)
 router.get('/images', FileController.GetAllImage)
 router.get('/pdfs', FileController.GetAllPdf)
 router.get('/notes', FileController.GetAllNote)
+router.get('/all/:date', FileController.GetAllFileDateWise)
 router.delete('/delete/:id', FileController.DeleteFile)
 
 // getAllImage,

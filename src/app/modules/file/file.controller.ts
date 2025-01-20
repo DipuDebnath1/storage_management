@@ -199,6 +199,32 @@ const GetAllNote: RequestHandler = catchAsync(async (req, res, next) => {
   });
 })
 
+// Get All file Date Wise
+const GetAllFileDateWise: RequestHandler = catchAsync(async (req, res, next) => {
+  const { authorization } = req.headers;
+  const {date} = req.params
+  const {name} = req.query
+  // Check authorization header
+  if (!authorization) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'provide access token.');
+  }
+
+  // Verify token
+  const token = tokenDecoded(authorization, config.accessToken as string);
+  if (!token) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
+  }
+
+  const result = await fileService.getFileDateWise(token.data._id, date, name as string)
+  // Respond with success
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: `${date} in all file retrived successfully.`,
+    data: result,
+  });
+})
+
 // Get All Image retived
 const DeleteFile: RequestHandler = catchAsync(async (req, res, next) => {
   const { authorization } = req.headers;
@@ -233,6 +259,6 @@ export const FileController = {
   GetAllImage,
   GetAllPdf,
   GetAllNote,
+  GetAllFileDateWise,
   DeleteFile
-  
 }
