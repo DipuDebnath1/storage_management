@@ -21,7 +21,7 @@ const createFolder = async (author:string, name:string, parentPath:string) => {
   }
 
     // Check if folder already exists
-    const existingFolder = await FolderCollection.findOne({ path: fullPath });
+    const existingFolder = await FolderCollection.findOne({ path: fullPath, author:new ObjectId(author) });
   if (existingFolder) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Folder already exists !')
   }

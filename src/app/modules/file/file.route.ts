@@ -1,12 +1,12 @@
 import express from "express"
-import { uploadAvatar } from "../../utills/storage"
+import { uploadFile } from "../../utills/storage"
 import { FileController } from "./file.controller"
 import { verifyLoginUser, verifyPermitionPrivetFolder } from "../../../midlewere/auth"
 
 const router = express.Router()
 
 
-router.post('/file/upload', verifyLoginUser(), uploadAvatar.single('file'), FileController.FileUpload)
+router.post('/file/upload', verifyLoginUser(), uploadFile.single('file'), FileController.FileUpload)
 router.put('/file/rename/:id', verifyLoginUser(),  FileController.ReNameFile)
 router.get('/', verifyLoginUser(), FileController.StorageUsesInfo)
 router.get('/cetegory',verifyLoginUser(), FileController.FileCategoryCount)

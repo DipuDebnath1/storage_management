@@ -1,0 +1,929 @@
+{
+	"info": {
+		"_postman_id": "f6d8ba72-2c4c-4e37-b02b-f65a779cacb6",
+		"name": "storage management",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35002653"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "profile",
+					"item": [
+						{
+							"name": "update profile",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{user-token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "jhon",
+											"type": "text"
+										},
+										{
+											"key": "des",
+											"value": "user",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "file",
+											"type": "file",
+											"src": "postman-cloud:///1efd5924-b649-4840-81ad-f4a72d466307"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{local-api}}/auth/update-profile",
+									"host": [
+										"{{local-api}}"
+									],
+									"path": [
+										"auth",
+										"update-profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update password",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{user-token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"newPassword\":\"654321\",\r\n    \"oldPassword\":\"123456\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{local-api}}/auth/update-password",
+									"host": [
+										"{{local-api}}"
+									],
+									"path": [
+										"auth",
+										"update-password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete accound",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{local-api}}/auth/delete",
+									"host": [
+										"{{local-api}}"
+									],
+									"path": [
+										"auth",
+										"delete"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "signup user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"dipu debnath\",\r\n    \"email\":\"user@example.com\",\r\n    \"password\":\"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local-api}}/auth/signup",
+							"host": [
+								"{{local-api}}"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sign in user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"user@example.com\",\r\n    \"password\":\"654321\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local-api}}/auth/signin",
+							"host": [
+								"{{local-api}}"
+							],
+							"path": [
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forget Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"dipudebnath965@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local-api}}/auth/forgetPassword",
+							"host": [
+								"{{local-api}}"
+							],
+							"path": [
+								"auth",
+								"forgetPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verifyResetPasswordVerificationCode",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"email\":\"dipudebnath965@gmail.com\",\r\n \"varificationCode\":245827\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local-api}}/auth/VerifyOTP",
+							"host": [
+								"{{local-api}}"
+							],
+							"path": [
+								"auth",
+								"VerifyOTP"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ResetPassword",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7Il9pZCI6IjY3OGEzNTBhNzI1YTNkYjJkNDFlMjU1YiIsIm5hbWUiOiJkaXB1IGRlYm5hdGgiLCJlbWFpbCI6ImRpcHVkZWJuYXRoOTY1QGdtYWlsLmNvbSIsImlzRGVsZXRlZCI6ZmFsc2UsImNyZWF0ZWRBdCI6IjIwMjUtMDEtMTdUMTA6NDY6MzQuNDM1WiIsInVwZGF0ZWRBdCI6IjIwMjUtMDEtMTdUMTM6MzU6MDYuNDE5WiIsIl9fdiI6MCwiZXhwaXJlSW4iOjE3MzcxMjI3MDY0MDQsInZhcmlmaWNhdGlvbkNvZGUiOjg5MDc1NX0sImlhdCI6MTczNzEyMDkyNiwiZXhwIjoxNzM5NzEyOTI2fQ.4KnIlbJO_dZ-jM-5iFqcJOF6NlaLo_mOoK8fiqFHeJo",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"newPassword\":\"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local-api}}/auth/resetPassword?",
+							"host": [
+								"{{local-api}}"
+							],
+							"path": [
+								"auth",
+								"resetPassword"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Log Out User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{user-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local-api}}/auth/signout",
+							"host": [
+								"{{local-api}}"
+							],
+							"path": [
+								"auth",
+								"signout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "storage",
+			"item": [
+				{
+					"name": "Home",
+					"item": [
+						{
+							"name": "getStorageUsesDataInfo",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{user-token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{local-api}}/storage?",
+									"host": [
+										"{{local-api}}"
+									],
+									"path": [
+										"storage"
+									],
+									"query": [
+										{
+											"key": "",
+											"value": null
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getFileCategory",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{user-token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{local-api}}/storage/cetegory",
+									"host": [
+										"{{local-api}}"
+									],
+									"path": [
+										"storage",
+										"cetegory"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "recentFile",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{user-token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{local-api}}/storage/recent",
+									"host": [
+										"{{local-api}}"
+									],
+									"path": [
+										"storage",
+										"recent"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "folder operation",
+					"item": [
+						{
+							"name": "create folder",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{user-token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\"name\":\"new folder\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{local-api}}/folder/create",
+									"host": [
+										"{{local-api}}"
+									],
+									"path": [
+										"folder",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllFolder",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{user-token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{local-api}}/folder/",
+									"host": [
+										"{{local-api}}"
+									],
+									"path": [
+										"folder",
+										""
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "new",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete folder",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{user-token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{local-api}}/folder/delete/678e87a4a084de3a98bd3d92",
+									"host": [
+										"{{local-api}}"
+									],
+									"path": [
+										"folder",
+										"delete",
+										"678e87a4a084de3a98bd3d92"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "file operation",
+					"item": [
+						{
+							"name": "fileUpload",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{user-token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file",
+											"description": "file",
+											"type": "file",
+											"src": "/F:/lavel-2/task/storage_management/assets/catfile.pdf"
+										},
+										{
+											"key": "folderPath",
+											"value": "shoot",
+											"description": "text",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "",
+											"value": "",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{local-api}}/storage/file/upload",
+									"host": [
+										"{{local-api}}"
+									],
+									"path": [
+										"storage",
+										"file",
+										"upload"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAll-Image",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{user-token}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{local-api}}/storage/images",
+									"host": [
+										"{{local-api}}"
+									],
+									"path": [
+										"storage",
+										"images"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "cat",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get Pdf files",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{user-token}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{local-api}}/storage/pdfs",
+									"host": [
+										"{{local-api}}"
+									],
+									"path": [
+										"storage",
+										"pdfs"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "cat",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get notes",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{local-api}}/storage/notes",
+									"host": [
+										"{{local-api}}"
+									],
+									"path": [
+										"storage",
+										"notes"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete file",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{local-api}}/storage/delete/678e8521ca6f52e9e5ba3a6b",
+									"host": [
+										"{{local-api}}"
+									],
+									"path": [
+										"storage",
+										"delete",
+										"678e8521ca6f52e9e5ba3a6b"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get Date Wise File",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{user-token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{local-api}}/storage/all/2025-01-20",
+									"host": [
+										"{{local-api}}"
+									],
+									"path": [
+										"storage",
+										"all",
+										"2025-01-20"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "file Rename",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\":\"cat info\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{local-api}}/storage/file/rename/678d0081b68673997b7e98f2",
+									"host": [
+										"{{local-api}}"
+									],
+									"path": [
+										"storage",
+										"file",
+										"rename",
+										"678d0081b68673997b7e98f2"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Favorite opration",
+					"item": [
+						{
+							"name": "create favorite",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{user-token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"favoriteItem\":\"678d00beb68673997b7e98f7\",\r\n    \"type\":\"file\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{local-api}}/favorite/create",
+									"host": [
+										"{{local-api}}"
+									],
+									"path": [
+										"favorite",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get all favorite",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{user-token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{local-api}}/favorite/",
+									"host": [
+										"{{local-api}}"
+									],
+									"path": [
+										"favorite",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "remove favourite",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{user-token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{local-api}}/favorite/delete/678d4565c94065841d3cebeb",
+									"host": [
+										"{{local-api}}"
+									],
+									"path": [
+										"favorite",
+										"delete",
+										"678d4565c94065841d3cebeb"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "privet",
+					"item": [
+						{
+							"name": "Auth",
+							"item": [
+								{
+									"name": "SetPrivetFolderPIN",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"privetPIN\":1234\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{local-api}}/auth/privet-setpin",
+											"host": [
+												"{{local-api}}"
+											],
+											"path": [
+												"auth",
+												"privet-setpin"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "LoginprivetAccess",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"privetPIN\":1234\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{local-api}}/auth/privet-login",
+											"host": [
+												"{{local-api}}"
+											],
+											"path": [
+												"auth",
+												"privet-login"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "LogoutPrivetAccess",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "{{local-api}}/auth/privet-logout",
+											"host": [
+												"{{local-api}}"
+											],
+											"path": [
+												"auth",
+												"privet-logout"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "removeFromPrivet",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{local-api}}/storage/privet/678e76caf1866e216c47f170",
+											"host": [
+												"{{local-api}}"
+											],
+											"path": [
+												"storage",
+												"privet",
+												"678e76caf1866e216c47f170"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "AddFileInPrivet",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{local-api}}/storage/privet/678e76caf1866e216c47f170",
+									"host": [
+										"{{local-api}}"
+									],
+									"path": [
+										"storage",
+										"privet",
+										"678e76caf1866e216c47f170"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getFromPrrivet",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{local-api}}/storage/privet",
+									"host": [
+										"{{local-api}}"
+									],
+									"path": [
+										"storage",
+										"privet"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}

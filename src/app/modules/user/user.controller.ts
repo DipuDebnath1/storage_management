@@ -294,9 +294,7 @@ const DeleteAccount: RequestHandler = catchAsync(async (req, res, next) => {
     throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
   }
   const result = await UserServices.deleteAccount(data._id);
-  if (result) {
     res.clearCookie("authToken")
-  }
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
