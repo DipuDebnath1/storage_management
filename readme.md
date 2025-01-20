@@ -1,18 +1,17 @@
 ### add .env file 
+* LOCAL_API=http://localhost:5000
+* DEVELOPMENT=localhost
+* PORT=5000
+* DATABASE_URL=
+* ACCESS_TOKEN=
+* RESET_TOKEN=
+* PRIVET_FOLDER_TOKEN=
+* SALTROUNDS=
+* MAIL_PASS=
+* MAIL_NAME=
 
-LOCAL_API=http://localhost:5000
-DEVELOPMENT=localhost
-PORT=5000
 
-DATABASE_URL=
-ACCESS_TOKEN=
-RESET_TOKEN=
-PRIVET_FOLDER_TOKEN=
-SALTROUNDS=
-MAIL_PASS=
-MAIL_NAME=
-
-## base postman API
+## base postman API 
 ### local-api = http://localhost:5000/api
 
 ## API Endpoints
