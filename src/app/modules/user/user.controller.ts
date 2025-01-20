@@ -26,8 +26,7 @@ const RegisterUser: RequestHandler = catchAsync(async (req, res, next) => {
 const LoginUser: RequestHandler = catchAsync(async (req, res, next) => {
   const data = await UserServices.loginUser(req.body);
 
-  if (data) {
-    const token = jwt.sign({ data }, config.accessToken as string, {
+  const token = jwt.sign({ data }, config.accessToken as string, {
       expiresIn: '7d',
     });
 
@@ -42,16 +41,7 @@ const LoginUser: RequestHandler = catchAsync(async (req, res, next) => {
       success: true,
       message: 'User logged in successfully',
       data: data,
-      token: token,
     });
-  } else {
-    sendResponse(res, {
-      statusCode: httpStatus.NOT_FOUND,
-      success: false,
-      message: 'User not found',
-      data: [],
-    });
-  }
 });
 
 // LoginUser;
@@ -81,7 +71,7 @@ const ForgetPassword: RequestHandler = catchAsync(async (req, res, next) => {
     data: data,
   });
 });
-//   verifyResetPasswprdVerificationCode
+//   verify Reset Passwprd Verification Code
 const VerifyResetPasswordVerificationCode: RequestHandler = catchAsync(async (req, res, next) => {
   
   const  {email, varificationCode } = req.body
@@ -93,6 +83,7 @@ const VerifyResetPasswordVerificationCode: RequestHandler = catchAsync(async (re
    const token = jwt.sign({ data }, config.resetToken as string, {
       expiresIn: '7d',
    });
+  // set reset token 
   res.cookie('resetPasswordToken', token, {
     httpOnly: true,
     secure: config.development === "production",
@@ -125,8 +116,10 @@ const ResetPassword: RequestHandler = catchAsync(async (req, res, next) => {
 
   const result = await UserServices.resetPassword( data, newPassword );
 
-  const authToken = jwt.sign({data:result}, config.accessToken as string, {expiresIn:7})
-  
+  const authToken = jwt.sign({ data: result }, config.accessToken as string, { expiresIn: 7 })
+  // clear reset token 
+  res.clearCookie('resetPasswordToken')
+  // set auth token 
    res.cookie('authToken', authToken, {
     httpOnly: true,
     secure: config.development === "production",
@@ -216,6 +209,80 @@ const UpdateUserPassword: RequestHandler = catchAsync(async (req, res, next) => 
   });
 });
 
+// set privet pin;
+const SetPrivetFolderPin: RequestHandler = catchAsync(async (req, res, next) => {
+  const { privetPIN } = req.body
+  // check PIN 
+  if (!privetPIN || typeof privetPIN !=="number" || privetPIN.toString().length!==4) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'provide 4 digit PIN')
+  }
+  // Check authorization header
+     const token  = req.cookies.authToken
+  // Verify token
+  const {data} = tokenDecoded(token, config.accessToken as string);
+    
+  if (!token || !data) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
+  }
+   await UserServices.setPrivetFolderPin(data._id,privetPIN);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'privet pin set successfully',
+    data: null,
+  });
+});
+
+// set privet pin;
+const LoginPrivetFolder: RequestHandler = catchAsync(async (req, res, next) => {
+  const { privetPIN } = req.body
+  // check PIN 
+  if (!privetPIN || typeof privetPIN !=="number" || privetPIN.toString().length!==4) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'provide 4 digit PIN')
+  }
+  // Check authorization header
+     const token  = req.cookies.authToken
+  // Verify token
+  const {data} = tokenDecoded(token, config.accessToken as string);
+    
+  if (!token || !data) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
+  }
+  const result = await UserServices.loginPrivetFolder(data._id,privetPIN);
+  
+  const privetFolderToken = jwt.sign({ data: result }, config.privetFolderToken as string, {
+    expiresIn:'1h'
+  })
+
+  res.cookie("privetFolderAccess", privetFolderToken, {
+    httpOnly: true,
+    secure: config.development === "production",
+    maxAge:1000 * 60 * 60
+  })
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'privet access permition success',
+    data: null,
+  });
+});
+
+// set privet pin;
+const LogOutPrivetFolder: RequestHandler = catchAsync(async (req, res, next) => {
+  
+  // Check authorization header
+   res.clearCookie('privetFolderAccess')
+  
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'privet access Logout success',
+    data: null,
+  });
+});
+
 // DeleteUserRole;
 const DeleteAccount: RequestHandler = catchAsync(async (req, res, next) => {
   // Check authorization header
@@ -250,4 +317,7 @@ export const UserController = {
   UpdateUserProfile,
   UpdateUserPassword,
   DeleteAccount,
+  SetPrivetFolderPin,
+  LoginPrivetFolder,
+  LogOutPrivetFolder
 };

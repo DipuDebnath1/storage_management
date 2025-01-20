@@ -21,6 +21,8 @@ const userSchema = new Schema<TUser>(
 
     avatar: {
       type: String,
+      required:false
+
     },
     isDeleted: {
       type: Boolean,
@@ -28,9 +30,16 @@ const userSchema = new Schema<TUser>(
     },
     varificationCode: {
       type: Number,
+      required:false
+    },
+    privetPIN: {
+      type: Number,
+      required:false
     },
     expireIn: {
       type: Number,
+      required:false
+
     },
   },
   {
@@ -53,7 +62,9 @@ userSchema.set('toJSON', {
   transform: function (doc, ret, options) {
     ret.password = undefined;
     ret.expireIn = undefined;
+    ret.isDeleted = undefined;
     ret.varificationCode = undefined;
+    ret.privetPIN = undefined;
     return ret;
   },
 });

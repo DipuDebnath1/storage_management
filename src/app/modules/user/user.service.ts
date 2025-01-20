@@ -7,7 +7,8 @@ import { UserCollection } from './user.model';
 import bcrypt from 'bcrypt';
 import { sendMail } from '../../mailSender';
 import { resetPasswordVarificationMessage } from '../../mailSender/mailFormat';
-
+import mongoose from 'mongoose';
+const {ObjectId} = mongoose.Types
 // ********user*********
 
 // sign up User
@@ -180,7 +181,23 @@ const updateUserPassword = async (userId: string, oldPassword:string, newPasswor
   }
 };
 
-// ********admin******
+// set PIN
+const setPrivetFolderPin = async (userId:string, pin:number) => {
+  const res = await UserCollection.findByIdAndUpdate(userId, { privetPIN: pin })
+  if (!res) {
+    throw new AppError(httpStatus.BAD_REQUEST,"pin set failed!")
+  }
+  return res
+}
+
+// login for Privet Foler
+const loginPrivetFolder = async (userId: string, PIN: number) => {
+  const res = await UserCollection.find({ _id: new ObjectId(userId), privetPIN: PIN })
+  if (!res) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Worng PIN")
+  }
+  return res
+}
 
 // delete user
 const deleteAccount = async (userId:string) => {
@@ -192,7 +209,6 @@ const deleteAccount = async (userId:string) => {
 };
 
 
-
 export const UserServices = {
   registerUserIntoDB,
   loginUser,
@@ -201,5 +217,7 @@ export const UserServices = {
   resetPassword,
   updateUserProfileDB,
   updateUserPassword,
+  setPrivetFolderPin,
+  loginPrivetFolder,
   deleteAccount,
 };

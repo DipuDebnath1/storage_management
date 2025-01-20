@@ -5,5 +5,6 @@ export type TUser = {
   avatar: string;
   isDeleted: boolean;
   varificationCode: number;
+  privetPIN: number;
   expireIn:number
 };

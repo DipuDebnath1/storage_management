@@ -43,6 +43,27 @@ const FileUpload: RequestHandler = catchAsync(async (req, res, next) => {
 });
 
 // storage Data
+const ReNameFile: RequestHandler = catchAsync(async (req, res, next) => {
+      const name = req.body.name
+      const file = req.params.id
+     const token  = req.cookies.authToken
+  // Verify token
+  const {data} = tokenDecoded(token, config.accessToken as string);
+  
+  if (!token || !data) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
+  }
+
+  const result = await fileService.reNameFile(data._id, file, name)
+  // Respond with success
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'storage name update successfully.',
+    data: result,
+  });
+})
+// storage Data
 const StorageUsesInfo: RequestHandler = catchAsync(async (req, res, next) => {
      const token  = req.cookies.authToken
   // Verify token
@@ -61,7 +82,6 @@ const StorageUsesInfo: RequestHandler = catchAsync(async (req, res, next) => {
     data: result,
   });
 })
-
 
 // file Category Count 
 const FileCategoryCount: RequestHandler = catchAsync(async (req, res, next) => {
@@ -208,9 +228,76 @@ const DeleteFile: RequestHandler = catchAsync(async (req, res, next) => {
   });
 })
 
+// Add To Privet
+const AddToPrivet: RequestHandler = catchAsync(async (req, res, next) => {
+  const {id} = req.params
+  // Check authorization header
+     const token  = req.cookies.authToken
+  // Verify token
+  const {data} = tokenDecoded(token, config.accessToken as string);
+  
+  if (!token || !data) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
+  }
+
+  const result = await fileService.addToPrivet(data._id, id as string)
+  // Respond with success
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'file add to Privet successfully.',
+    data: result,
+  });
+})
+
+// remove From Privet
+const removeFromPrivet: RequestHandler = catchAsync(async (req, res, next) => {
+  const {id} = req.params
+  // Check authorization header
+     const token  = req.cookies.authToken
+  // Verify token
+  const {data} = tokenDecoded(token, config.accessToken as string);
+  
+  if (!token || !data) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
+  }
+
+  const result = await fileService.removeFromPrivet(data._id, id as string)
+  // Respond with success
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'file remove from Privet successfully.',
+    data: result,
+  });
+})
+
+// Get From Privet
+const GetFromPrivet: RequestHandler = catchAsync(async (req, res, next) => {
+  const {name} = req.query
+  // Check authorization header
+     const token  = req.cookies.authToken
+  // Verify token
+  const {data} = tokenDecoded(token, config.accessToken as string);
+  
+  if (!token || !data) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid or expired token.');
+  }
+
+  const result = await fileService.getFromPrivet(data._id,  name as string)
+  // Respond with success
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'retived Privet items successfully.',
+    data: result,
+  });
+})
+
 
 export const FileController = {
   FileUpload,
+  ReNameFile,
   StorageUsesInfo,
   FileCategoryCount,
   RecentFile,
@@ -218,5 +305,9 @@ export const FileController = {
   GetAllPdf,
   GetAllNote,
   GetAllFileDateWise,
-  DeleteFile
+  DeleteFile,
+  //privet
+  AddToPrivet,
+  GetFromPrivet,
+  removeFromPrivet
 }

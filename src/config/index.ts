@@ -13,6 +13,7 @@ export default {
   mailPassword: process.env.MAIL_PASS,
   mailName: process.env.MAIL_NAME,
   resetToken: process.env.RESET_TOKEN,
+  privetFolderToken: process.env.PRIVET_FOLDER_TOKEN,
   cloudinary_name: process.env.CLOUDINARY_CLOUD_NAME,
   cloudinary_api_key: process.env.CLOUDINARY_API_KEY,
   cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET,

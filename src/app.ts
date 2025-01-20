@@ -24,7 +24,7 @@ app.use('/public', express.static('public'));
 app.use('/api', router);
 
 const getController = (req: Request, res: Response) => {
-  res.send('tech-tips-and-tricks-server');
+  res.send('storage management systems');
 };
 app.get('/', getController);
 

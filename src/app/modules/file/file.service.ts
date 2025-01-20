@@ -35,6 +35,67 @@ const uploadFile = async (author: string, fileData: any, folderPath: any) => {
 
   return res;
 };
+
+//rename file retrived
+const reNameFile = async (author: string, fileId: string, name: string) => {
+  const query = {
+    author: new ObjectId(author),
+    _id: new ObjectId(fileId),
+  }
+  
+  const file = await FileCollection.updateOne(query, { name },{new:true})
+  if (!file) {
+    throw new AppError(httpStatus.NOT_FOUND, "file not found")
+  }
+  return file
+}
+
+//add file in privet
+const addToPrivet = async (author: string, fileId: string) => {
+  const query = {
+    author: new ObjectId(author),
+    _id: new ObjectId(fileId),
+  }
+  
+  const file = await FileCollection.updateOne(query, { isPrivet:true },{new:true})
+  if (!file) {
+    throw new AppError(httpStatus.NOT_FOUND, "add privet failed")
+  }
+  return file
+}
+
+//get privet file 
+const getFromPrivet = async (author: string, name:string) => {
+  const query:any = {
+    includePrivate:true,
+    author: new ObjectId(author),
+  }
+
+  if (name) {
+    query.name = { $regex: name, $options: 'i' } 
+  }
+  
+  const file = await FileCollection.find(query)
+  if (!file) {
+    throw new AppError(httpStatus.NOT_FOUND, "add privet failed")
+  }
+  return file
+}
+
+//add privet file 
+const removeFromPrivet = async (author: string, fileId: string) => {
+  const query = {
+    author: new ObjectId(author),
+    _id: new ObjectId(fileId),
+  }
+  
+  const file = await FileCollection.updateOne(query, { isPrivet:false },{new:true})
+  if (!file) {
+    throw new AppError(httpStatus.NOT_FOUND, "add privet failed")
+  }
+  return file
+}
+
  //storage data
 const storageUsesInfo = async (author: string) => {
 
@@ -114,6 +175,7 @@ const getAllNote = async (author: string, params:string) => {
   const images = await FileCollection.find(query)
   return images
 }
+
 //note note retrived
 const getFileDateWise = async (author: string, date: string, params: string) => {
   const startDate = new Date(date)
@@ -131,6 +193,7 @@ const getFileDateWise = async (author: string, date: string, params: string) => 
   const files = await FileCollection.find(query)
   return files
 }
+
 //delete file
 const deleteFile = async (author: string, fileId:string) => {
   const params = {author: new ObjectId(author), _id: new ObjectId(fileId)}
@@ -140,6 +203,7 @@ const deleteFile = async (author: string, fileId:string) => {
 
 export const fileService = {
   uploadFile,
+  reNameFile,
   storageUsesInfo,
   fileCategoryCount,
   recentFile,
@@ -148,4 +212,9 @@ export const fileService = {
   getAllNote,
   getFileDateWise,
   deleteFile,
+  //privet
+  addToPrivet,
+  getFromPrivet,
+  removeFromPrivet
+  
 }
